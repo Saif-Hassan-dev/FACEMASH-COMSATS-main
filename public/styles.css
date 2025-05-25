@@ -1,0 +1,197 @@
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto Mono', monospace;
+  background: #EDF1D6;
+  color: #1a1a1a;
+}
+header {
+
+  padding-left: 45%;
+
+}
+footer {
+
+  padding-left: 40%;
+  padding-top: 60px;
+
+}
+h1, h2, h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.neo-brutalist, .pic-card, #upload-section, #upload-form button, #vote-button, #skip-button {
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  border-radius: 0;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+  background: #fff;
+}
+
+.neo-brutalist:hover, .pic-card:hover, #upload-form button:hover, #vote-button:hover, #skip-button:hover {
+  box-shadow: 4px 4px 0 #000;
+  transform: translate(2px, 2px);
+}
+
+#vote-button, #skip-button {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3em;
+  padding: 12px 32px;
+  background: #EDF1D6;
+  color: #073B4C;
+  margin: 0 10px 40px 10px;
+}
+
+#vote-button:hover, #skip-button:hover, #upload-form button:hover {
+  background: #F8F9FA;
+  color: #073B4C;
+}
+
+.pic-card {
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #000;
+  border: 4px solid #000;
+  padding: 18px 16px 10px 16px;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 240px;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+}
+
+.pic-card img {
+  border-radius: 0;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  width: 200px;
+  height: 220px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.pic-name {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #537D5D;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+#upload-section {
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #000;
+  border: 4px solid #000;
+  padding: 18px 0 10px 0;
+  margin-bottom: 24px;
+  width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#upload-form input[type="file"], #upload-form input[type="text"] {
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #f4f4f4;
+  padding: 8px;
+  margin-bottom: 8px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.pic-row, #image-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  margin: 32px 0 24px 0;
+  flex-wrap: wrap;
+}
+.pic-card.selected {
+  background: #b6f5c6 !important;
+  border-color: #537D5D !important;
+  box-shadow: 0 0 0 4px #537D5D, 8px 8px 0 #000;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+#show-upload-btn  , #upload-form button{
+  display: block;
+  margin: 20px auto 10px auto;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3em;
+  padding: 12px 32px;
+  background: #537D5D;
+  color: #000000;
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+}
+
+#show-upload-btn:hover {
+  background: #F8F9FA;
+  color: #073B4C;
+  box-shadow: 4px 4px 0 #000;
+  transform: translate(2px, 2px);
+}
+
+.close-upload-btn {
+  position: absolute;
+  right: -20px;   /* Half outside the right edge */
+  top: -20px;     /* Half above the top edge */
+  background: #537D5D;
+  color: #ffffff;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  font-size: 2em;
+  font-family: 'Bebas Neue', sans-serif;
+  cursor: pointer;
+ 
+  width: 44px;
+  height: 44px;
+  line-height: 38px;
+  text-align: center;
+  z-index: 10;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.close-upload-btn:hover {
+  background: #F8F9FA;
+  color: black;
+  box-shadow: 2px 2px 0 #000;
+  transform: translate(1px, 1px);
+}
+#upload-section {
+  position: relative;
+}
+.admin-btn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3em;
+  background: none;
+  color: #222;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+  outline: none;
+}
+.admin-btn:hover, .admin-btn:focus {
+  color: #537D5D;
+  text-decoration: underline;
+  background: none;
+  box-shadow: none;
+}

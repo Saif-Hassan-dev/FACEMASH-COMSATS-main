@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facemash Clone</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Bebas+Neue:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 class="header-title">RANKINGS.</h1>
+        <div id="admin-login-toggle" style="position:absolute;top:24px;right:40px;z-index:1000;">
+            <button id="show-admin-login-btn" class="admin-btn">Admin</button>
+        </div>
+        <div id="admin-login-section" style="display:none;position:absolute;top:60px;right:40px;z-index:1001;background:#fff;border:2px solid #537D5D;padding:16px 18px 12px 18px;border-radius:8px;box-shadow:0 2px 12px #537D5D;">
+            <input type="password" id="admin-password" placeholder="Admin password" style="padding:6px 10px;">
+            <button id="admin-login-btn" style="padding:6px 18px;">Login</button>
+            <button id="admin-logout-btn" style="padding:6px 18px;display:none;">Logout</button>
+            <span id="admin-status" style="margin-left:10px;color:#537D5D;font-weight:bold;"></span>
+        </div>
+    </header>
+    <main>
+       
+    <section id="image-container" class="pic-row">
+        <!-- Images will be dynamically inserted here -->
+    </section>
+    <section id="voting-section" class="button-row">
+    <button id="vote-button">Vote</button>
+    <button id="skip-button">Skip</button>
+    </section>
+     
+    <!-- Upload Section -->
+    
+    <button id="show-upload-btn" class="neo-brutalist">Add a Person</button>
+    <section id="upload-section" style="display:none;margin-top: 15px;">
+        <button id="close-upload-btn" type="button" aria-label="Close upload" class="close-upload-btn">&times;</button>
+        <form id="upload-form">
+<div style="font-size: 30px; color: #73946B; padding-left: 50px; padding-bottom: 20px; text-shadow:  0 0 12px #b6f5c6, 0 0 24px #fff;">ADD A PERSON</div>            <img id="preview-img" src="" alt="Preview" style="display:none; max-width:120px; max-height:120px; border-radius:10px; margin-left:15px; margin-bottom:10px;">
+            <input type="file" id="upload-image" accept="image/*" required style="margin-left: 15px;">
+            <input type="text" id="upload-name" placeholder="Enter name" required style="margin-left: 15px;">
+            <button type="submit">Upload</button>
+        </form>
+    </section>
+
+    <section id="leaderboard-section" class="neo-brutalist" style="max-width:400px;margin:32px auto;">
+  <h2 style="text-align:center;">Leaderboard</h2>
+  <ul id="leaderboard-list" style="list-style-type: none; padding-right: 20px;"></ul>
+</section>
+
+    </main>
+    <footer>
+        
+        <p>&copy; 2025 The Facemash For COMSATS</p>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>

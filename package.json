@@ -1,0 +1,17 @@
+{
+  "name": "facemash-clone",
+  "version": "1.0.0",
+  "description": "A clone of the Facemash website for comparing user images.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.15.0",
+    "multer": "^2.0.0"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}

@@ -1,0 +1,8 @@
+runtime: nodejs18
+env: flex
+automatic_scaling:
+  min_num_instances: 1
+env_variables:
+  ADMIN_PASSWORD: "saifulhassan123"
+  GCS_BUCKET: "my-storage-admin"
+  GCS_KEYFILE: "gcs-keyfile.json"

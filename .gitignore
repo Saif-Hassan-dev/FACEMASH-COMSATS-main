@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+*.env
+
+# Google Cloud credentials
+*.json
+!package.json
+!data.json
+
+# Ignore GCS keyfile
+/gcs-keyfile.json

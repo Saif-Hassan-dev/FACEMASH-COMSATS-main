@@ -112,7 +112,7 @@ document.getElementById('voting-section').onclick = async function(e) {
         await fetch('/api/vote', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ winnerId: selectedPicId })
+            body: JSON.stringify({ id: selectedPicId })
         });
         await fetchUsers();
         renderImages();

@@ -1,12 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { Storage } = require('@google-cloud/storage');
-const GCS_BUCKET = process.env.GCS_BUCKET;
-const GCS_KEYFILE = process.env.GCS_KEYFILE || undefined;
-const storage = new Storage(GCS_KEYFILE ? { keyFilename: GCS_KEYFILE } : {});
-const bucket = storage.bucket(GCS_BUCKET);
 
 const dataPath = path.join(__dirname, '../../data.json');
+const uploadsDir = path.join(__dirname, '../../public/uploads');
 
 function readData() {
     if (!fs.existsSync(dataPath)) return [];
@@ -17,10 +13,6 @@ function writeData(data) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }
 
-function getPublicUrl(filename) {
-    return `https://storage.googleapis.com/${GCS_BUCKET}/${filename}`;
-}
-
 class FacemashController {
     async getAllUsers(req, res) {
         const users = readData();
@@ -29,75 +21,57 @@ class FacemashController {
 
     async uploadUser(req, res) {
         const { name } = req.body;
-        if (!name || !req.file) {
-            return res.status(400).json({ error: 'Name and image are required.' });
+        if (!req.file || !name) {
+            return res.status(400).json({ error: 'Image and name are required.' });
         }
-        // Upload file to GCS
-        const gcsFilename = Date.now() + '-' + req.file.originalname;
-        const blob = bucket.file(gcsFilename);
-        const stream = blob.createWriteStream({ resumable: false, contentType: req.file.mimetype });
-        stream.on('error', err => {
-            console.error('GCS upload error:', err);
-            return res.status(500).json({ error: 'Failed to upload image.' });
-        });
-        stream.on('finish', async () => {
-            await blob.makePublic();
-            const imageUrl = getPublicUrl(gcsFilename);
-            const users = readData();
-            const user = {
-                id: Date.now().toString(),
-                name,
-                imageUrl,
-                votes: 0
-            };
-            users.push(user);
-            writeData(users);
-            res.json(user);
-        });
-        stream.end(req.file.buffer);
+
+        // Save file locally
+        const ext = path.extname(req.file.originalname);
+        const filename = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}${ext}`;
+        const filepath = path.join(uploadsDir, filename);
+
+        fs.writeFileSync(filepath, req.file.buffer);
+
+        // Add user to data.json
+        const users = readData();
+        const newUser = {
+            id: Date.now().toString(),
+            name,
+            imageUrl: `uploads/${filename}`,
+            votes: 0
+        };
+        users.push(newUser);
+        writeData(users);
+
+        res.json(newUser);
     }
 
     async handleVote(req, res) {
-        const { winnerId } = req.body;
+        const { id } = req.body;
         const users = readData();
-        const user = users.find(u => u.id === winnerId);
+        const user = users.find(u => u.id === id);
         if (user) {
-            user.votes += 1;
+            user.votes = (user.votes || 0) + 1;
             writeData(users);
-            res.json({ message: 'Vote recorded', user });
+            res.json({ success: true });
         } else {
             res.status(404).json({ error: 'User not found' });
         }
     }
 
-    async deleteUser(req, res) {
+    deleteUser(req, res) {
         const { id } = req.body;
-        if (!id) {
-            console.error('DeleteUser: No id in body', req.body);
-            return res.status(400).json({ error: 'No user id provided.' });
-        }
         let users = readData();
-        const userIndex = users.findIndex(u => u.id === id);
-        if (userIndex === -1) {
-            console.error('DeleteUser: User not found', id);
-            return res.status(404).json({ error: 'User not found' });
-        }
-        // Delete image from GCS
-        const imageUrl = users[userIndex].imageUrl;
-        if (imageUrl && imageUrl.includes(`https://storage.googleapis.com/${GCS_BUCKET}/`)) {
-            const gcsFilename = imageUrl.split(`/`).pop();
-            try { await bucket.file(gcsFilename).delete(); } catch (e) { console.error('DeleteUser: Failed to delete GCS image', e); }
-        }
-        users.splice(userIndex, 1);
+        users = users.filter(u => u.id !== id);
         writeData(users);
-        res.json({ message: 'User deleted' });
+        res.json({ success: true });
     }
 }
 
 function getLeaderboard(req, res) {
     const users = readData();
-    users.sort((a, b) => b.votes - a.votes);
-    res.json(users);
+    const sorted = users.slice().sort((a, b) => b.votes - a.votes);
+    res.json(sorted);
 }
 
 module.exports = {

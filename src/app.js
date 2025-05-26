@@ -23,7 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 facemashRoutes(app); // ✅ Register routes AFTER app is defined
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'facemashadmin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '123';
 app.post('/api/admin-login', (req, res) => {
     const { password } = req.body;
     if (password === ADMIN_PASSWORD) {

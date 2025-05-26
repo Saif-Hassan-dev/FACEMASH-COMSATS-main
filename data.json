@@ -3,13 +3,13 @@
     "id": "1",
     "name": "Alice",
     "imageUrl": "uploads/images (1).jpg",
-    "votes": 2
+    "votes": 3
   },
   {
     "id": "2",
     "name": "Bob",
     "imageUrl": "uploads/images.jpg",
-    "votes": 3
+    "votes": 4
   },
   {
     "id": "3",

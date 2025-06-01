@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wordle Game</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Bebas+Neue:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet">
+    <style>
+            body { background: #EDF1D6; }
+            .neo-brutalist-wordle, .neo-brutalist {
+                max-width: 440px;
+                margin: 40px auto;
+                padding: 28px 18px 24px 18px;
+                background: #fff;
+                border-radius: 0;
+                border: 4px solid #000;
+                box-shadow: 8px 8px 0 #000;
+            }
+            .wordle-title {
+                text-align: center;
+                font-family: 'Bebas Neue', cursive;
+                font-size: 2.2em;
+                letter-spacing: 2px;
+                color: #537D5D;
+                margin-bottom: 8px;
+            }
+            .grid { display: grid; grid-template-columns: repeat(5, 48px); gap: 8px; justify-content: center; margin: 24px 0; }
+            .cell {
+                width: 48px; height: 48px;
+                border: 4px solid #000;
+                border-radius: 0;
+                font-size: 2em;
+                text-align: center;
+                line-height: 48px;
+                background: #fff;
+                font-family: 'Roboto Mono', monospace;
+                text-transform: uppercase;
+                transition: background 0.2s, border 0.2s;
+                box-shadow: 8px 8px 0 #000;
+            }
+            .cell.filled { border-color: #537D5D; background: #fff; }
+            .cell.correct { background: #6aaa64; color: #fff; border-color: #6aaa64; box-shadow: 8px 8px 0 #000; }
+            .cell.present { background: #c9b458; color: #fff; border-color: #c9b458; box-shadow: 8px 8px 0 #000; }
+            .cell.absent { background: #787c7e; color: #fff; border-color: #787c7e; box-shadow: 8px 8px 0 #000; }
+            .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 18px 0; }
+            .key {
+                min-width: 36px;
+                padding: 10px 0;
+                border: 4px solid #000;
+                border-radius: 0;
+                background: #fff;
+                font-size: 1em;
+                font-family: 'Roboto Mono', monospace;
+                cursor: pointer;
+                text-transform: uppercase;
+                margin-bottom: 4px;
+                margin-right: 2px;
+                box-shadow: 8px 8px 0 #000;
+                transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+            }
+            .key:hover, .key:active {
+                background: #F8F9FA;
+                color: #073B4C;
+                box-shadow: 4px 4px 0 #000;
+                transform: translate(2px, 2px);
+            }
+            .key.correct { background: #6aaa64; color: #fff; border-color: #6aaa64; }
+            .key.present { background: #c9b458; color: #fff; border-color: #c9b458; }
+            .key.absent { background: #787c7e; color: #fff; border-color: #787c7e; }
+            .wordle-message {
+                text-align: center;
+                font-size: 1.1em;
+                margin: 12px 0;
+                min-height: 24px;
+                color: #537D5D;
+                font-family: 'Roboto Mono', monospace;
+            }
+            @media (max-width: 600px) { .neo-brutalist-wordle, .neo-brutalist { padding: 8px; } .grid { gap: 4px; } .cell { width: 36px; height: 36px; font-size: 1.2em; } }
+        </style>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">WORDLE</h1>
+        <div style="position:absolute;top:24px;right:40px;z-index:1000;">
+            <a href="index.html" class="admin-btn">Home</a>
+        </div>
+    </header>
+    <main>
+        <section class="neo-brutalist" style="max-width:440px;margin:40px auto;padding:28px 18px 24px 18px;">
+            <div id="wordle-message" class="wordle-message"></div>
+            <div id="wordle-grid" class="grid"></div>
+            <div id="wordle-keyboard" class="keyboard"></div>
+        </section>
+        <!-- Neo-brutalist Win/Loss Popup Modal -->
+        <div id="result-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.25);z-index:9999;align-items:center;justify-content:center;">
+            <div style="background:#fff;border:4px solid #000;box-shadow:8px 8px 0 #000;padding:32px 24px;text-align:center;max-width:340px;margin:auto;font-family:'Bebas Neue',cursive;font-size:2em;color:#537D5D;position:relative;">
+                <div id="result-modal-message" style="margin-bottom:18px;"></div>
+                <button id="close-modal-btn" style="font-family:'Roboto Mono',monospace;font-size:1em;padding:10px 24px;border:4px solid #000;background:#6aaa64;color:#fff;box-shadow:4px 4px 0 #000;cursor:pointer;margin-bottom:10px;">Close</button>
+                <button id="refresh-btn" style="font-family:'Roboto Mono',monospace;font-size:1em;padding:10px 24px;border:4px solid #000;background:#537D5D;color:#fff;box-shadow:4px 4px 0 #000;cursor:pointer;">Play Again</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p style="text-align:center;">&copy; 2025 The Facemash For COMSATS</p>
+    </footer>
+    <script>
+// --- Wordle Game Logic ---
+const WORD_LIST = [
+    'apple','grape','table','chair','plant','crane','flame','sword','brick','cloud','dream','light','mouse','piano','river','sheep','tiger','vivid','wrist','youth','zebra','lunch','quiet','roast','spice','track','unity','vapor','waltz','xenon','yield','zesty','blush','cabin','daisy','eagle','fable','giant','haste','ivory','jolly','kneel','lemon','mango','noble','ocean','pouch','quilt','rider','sling','truce','ultra','vigor','widen','yacht','zonal'
+];
+const MAX_ROWS = 6;
+const WORD_LENGTH = 5;
+let secret = '';
+let currentRow = 0;
+let currentCol = 0;
+let guesses = Array.from({length: MAX_ROWS}, () => Array(WORD_LENGTH).fill(''));
+let gameOver = false;
+
+function pickSecret() {
+    secret = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toLowerCase();
+}
+function renderGrid() {
+    const grid = document.getElementById('wordle-grid');
+    grid.innerHTML = '';
+    for (let r = 0; r < MAX_ROWS; r++) {
+        for (let c = 0; c < WORD_LENGTH; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell' + (guesses[r][c] ? ' filled' : '');
+            cell.textContent = guesses[r][c];
+            if (r < currentRow) {
+                const result = getCellResult(r, c);
+                if (result) cell.classList.add(result);
+            }
+            grid.appendChild(cell);
+        }
+    }
+}
+function renderKeyboard() {
+    const keys = 'qwertyuiopasdfghjklzxcvbnm'.split('');
+    const kb = document.getElementById('wordle-keyboard');
+    kb.innerHTML = '';
+    keys.forEach(k => {
+        const btn = document.createElement('button');
+        btn.className = 'key';
+        btn.textContent = k;
+        btn.onclick = () => handleKey(k);
+        const status = getKeyStatus(k);
+        if (status) btn.classList.add(status);
+        kb.appendChild(btn);
+    });
+    // Add Enter and Backspace
+    const enter = document.createElement('button');
+    enter.className = 'key';
+    enter.textContent = 'Enter';
+    enter.onclick = () => handleKey('Enter');
+    kb.appendChild(enter);
+    const back = document.createElement('button');
+    back.className = 'key';
+    back.textContent = '⌫';
+    back.onclick = () => handleKey('Backspace');
+    kb.appendChild(back);
+}
+function getCellResult(r, c) {
+    const guess = guesses[r].join('').toLowerCase();
+    if (!guess) return '';
+    const letter = guesses[r][c];
+    if (secret[c] === letter) return 'correct';
+    else if (secret.includes(letter)) {
+        // Check for overuse of present letters
+        let countInSecret = [...secret].filter(l => l === letter).length;
+        let correctInGuess = 0;
+        for (let i = 0; i < WORD_LENGTH; i++) {
+            if (guesses[r][i] === letter && secret[i] === letter) correctInGuess++;
+        }
+        let presentSoFar = 0;
+        for (let i = 0; i <= c; i++) {
+            if (guesses[r][i] === letter && secret[i] !== letter) presentSoFar++;
+        }
+        if (presentSoFar <= countInSecret - correctInGuess) return 'present';
+    }
+    return 'absent';
+}
+function getKeyStatus(k) {
+    let foundCorrect = false;
+    let foundPresent = false;
+    let foundAbsent = false;
+    for (let r = 0; r < currentRow; r++) {
+        for (let c = 0; c < WORD_LENGTH; c++) {
+            if (guesses[r][c] === k) {
+                const res = getCellResult(r, c);
+                if (res === 'correct') foundCorrect = true;
+                else if (res === 'present') foundPresent = true;
+                else if (res === 'absent') foundAbsent = true;
+            }
+        }
+    }
+    if (foundCorrect) return 'correct';
+    if (foundPresent) return 'present';
+    if (foundAbsent) return 'absent';
+    return '';
+}
+function handleKey(key) {
+    if (gameOver) return;
+    if (key === 'Backspace') {
+        for (let c = WORD_LENGTH - 1; c >= 0; c--) {
+            if (guesses[currentRow][c]) {
+                guesses[currentRow][c] = '';
+                currentCol = c;
+                break;
+            }
+        }
+        renderGrid();
+        return;
+    }
+    if (key === 'Enter') {
+        if (guesses[currentRow].every(l => l)) {
+            const guessWord = guesses[currentRow].join('').toLowerCase();
+            if (!WORD_LIST.includes(guessWord)) {
+                showMessage('Not in word list');
+                return;
+            }
+            renderGrid();
+            renderKeyboard(); // Update keyboard after guess
+            if (guessWord === secret) {
+                showMessage('Congratulations! You guessed it!');
+                gameOver = true;
+                showResultModal(true);
+                return;
+            }
+            currentRow++;
+            currentCol = 0;
+            if (currentRow === MAX_ROWS) {
+                showMessage('Game over! The word was: ' + secret.toUpperCase());
+                gameOver = true;
+                showResultModal(false, secret);
+                return;
+            }
+            renderGrid();
+            renderKeyboard(); // Update keyboard after guess
+        }
+        return;
+    }
+    if (/^[a-z]$/.test(key) && currentCol < WORD_LENGTH) {
+        guesses[currentRow][currentCol] = key;
+        currentCol++;
+        renderGrid();
+    }
+}
+function showMessage(msg) {
+    document.getElementById('wordle-message').textContent = msg;
+}
+function showResultModal(isWin, answer) {
+    const modal = document.getElementById('result-modal');
+    const msgDiv = document.getElementById('result-modal-message');
+    if (isWin) {
+        msgDiv.innerHTML = '🎉 Congratulations! 🎉<br>You guessed it!';
+    } else {
+        msgDiv.innerHTML = '😢 Game Over!<br>The word was:<br><span style="color:#c9b458">' + answer.toUpperCase() + '</span>';
+    }
+    modal.style.display = 'flex';
+    document.getElementById('close-modal-btn').onclick = function() {
+        modal.style.display = 'none';
+    };
+    document.getElementById('refresh-btn').onclick = function() {
+        modal.style.display = 'none';
+        startGame();
+    };
+}
+function handlePhysicalKeyboard(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    let key = e.key;
+    if (key === 'Backspace' || key === 'Enter' || (/^[a-zA-Z]$/.test(key) && key.length === 1)) {
+        handleKey(key.length === 1 ? key.toLowerCase() : key);
+    }
+}
+function startGame() {
+    pickSecret();
+    currentRow = 0;
+    currentCol = 0;
+    guesses = Array.from({length: MAX_ROWS}, () => Array(WORD_LENGTH).fill(''));
+    gameOver = false;
+    showMessage('');
+    renderGrid();
+    renderKeyboard();
+}
+document.addEventListener('DOMContentLoaded', () => {
+    startGame();
+    document.addEventListener('keydown', handlePhysicalKeyboard);
+});
+    </script>
+</body>
+</html>

@@ -262,4 +262,4 @@ async function renderLeaderboard() {
             };
         });
     }
-}asodifh
+}

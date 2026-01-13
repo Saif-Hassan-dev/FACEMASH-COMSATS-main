@@ -58,23 +58,40 @@ document.getElementById('upload-form').onsubmit = async function(e) {
     e.preventDefault();
     const fileInput = document.getElementById('upload-image');
     const nameInput = document.getElementById('upload-name');
+
+    if (!fileInput.files || !fileInput.files[0]) {
+        alert('Please choose a file to upload.');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('image', fileInput.files[0]);
-    formData.append('name', nameInput.value);
+    formData.append('name', nameInput.value || '');
 
-    const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-    });
-    if (res.ok) {
+    try {
+        const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => null);
+            console.error('Upload failed', res.status, text);
+            alert('Upload failed: ' + (text || res.status));
+            return;
+        }
+
         await fetchUsers();
         renderImages();
-        renderLeaderboard(); 
+        renderLeaderboard();
         this.reset();
         document.getElementById('upload-section').style.display = 'none';
         document.getElementById('show-upload-btn').style.display = 'block';
+    } catch (err) {
+        console.error('Upload error', err);
+        alert('Upload error: ' + err.message);
     }
-};
+}
 
 // Show upload section
 document.getElementById('show-upload-btn').onclick = function() {
@@ -166,7 +183,10 @@ function setupAdminUI() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: pwd })
         });
-        if (resp.ok) {
+        if (resp.ok) {const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    formData.append('name', nameInput.value || '');
+
             isAdmin = true;
             status.textContent = 'Admin logged in';
             loginBtn.style.display = 'none';

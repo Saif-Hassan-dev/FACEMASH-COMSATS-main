@@ -181,12 +181,32 @@ function setupAdminUI() {
         const resp = await fetch('/api/admin-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: pwd })
+            body: JSON.stringify({ password: pwd }),
+            credentials: 'include'
         });
-        if (resp.ok) {const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-    formData.append('name', nameInput.value || '');
-
+        if (resp.ok) {
+            isAdmin = true;
+            status.textContent = 'Admin logged in';
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
+            document.getElementById('admin-password').style.display = 'none';
+            document.getElementById('admin-login-section').style.display = 'none';
+            renderLeaderboard();
+        } else {
+            const err = await resp.json();
+            status.textContent = err.error || 'Wrong password';
+            setTimeout(() => status.textContent = '', 2000);
+        }
+    };
+       loginBtn.onclick = async function() {
+        const pwd = document.getElementById('admin-password').value;
+        const resp = await fetch('/api/admin-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pwd }),
+            credentials: 'include'
+        });
+        if (resp.ok) {
             isAdmin = true;
             status.textContent = 'Admin logged in';
             loginBtn.style.display = 'none';
@@ -224,24 +244,20 @@ async function renderLeaderboard() {
     if (isAdmin) {
         document.querySelectorAll('.delete-user-btn').forEach(btn => {
             btn.onclick = async function() {
-                if (confirm('Are you sure you want to delete this user?')) {
-                    const resp = await fetch('/api/delete-user', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: btn.getAttribute('data-id') })
-                    });
+                const id = this.getAttribute('data-id');
+                if (!confirm('Delete this user?')) return;
+                try {
+                    const resp = await fetch('/api/users/' + id, { method: 'DELETE', credentials: 'include' });
                     if (resp.ok) {
                         await fetchUsers();
-                        renderImages();
                         renderLeaderboard();
                     } else {
-                        let msg = 'Failed to delete user.';
-                        try {
-                            const err = await resp.json();
-                            if (err && err.error) msg = err.error;
-                        } catch {}
-                        alert(msg);
+                        const text = await resp.text().catch(()=>null);
+                        alert('Delete failed: ' + (text || resp.status));
                     }
+                } catch (err) {
+                    console.error('Delete error', err);
+                    alert('Delete error: ' + err.message);
                 }
             };
         });

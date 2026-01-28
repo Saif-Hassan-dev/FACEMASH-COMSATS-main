@@ -13,6 +13,7 @@ function writeData(data) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }
 
+//controller
 class FacemashController {
     async getAllUsers(req, res) {
         const users = readData();

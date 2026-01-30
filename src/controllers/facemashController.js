@@ -8,7 +8,7 @@ function readData() {
     if (!fs.existsSync(dataPath)) return [];
     return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 }
-
+//func for writing data
 function writeData(data) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }
@@ -26,7 +26,7 @@ class FacemashController {
             return res.status(400).json({ error: 'Image and name are required.' });
         }
 
-        // Save file locally
+        // Save file locallym
         const ext = path.extname(req.file.originalname);
         const filename = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}${ext}`;
         const filepath = path.join(uploadsDir, filename);

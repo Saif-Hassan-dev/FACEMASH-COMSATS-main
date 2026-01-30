@@ -210,7 +210,7 @@ function setupAdminUI() {
     };
 }
 
-// rendering leaderboard
+// rendering leaderboard/
 async function renderLeaderboard() {
     const res = await fetch('/api/leaderboard');
     const users = await res.json();

@@ -1,6 +1,7 @@
 export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+//for formatiign users data
 
 export function formatUserData(user) {
     return {

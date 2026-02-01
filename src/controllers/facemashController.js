@@ -8,7 +8,7 @@ function readData() {
     if (!fs.existsSync(dataPath)) return [];
     return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 }
-//func for writing data
+//func for writing dataa
 function writeData(data) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }

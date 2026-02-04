@@ -1,4 +1,4 @@
-# Use Node.js LTS
+# Use Node.js LT
 FROM node:18
 
 WORKDIR /usr/src/app

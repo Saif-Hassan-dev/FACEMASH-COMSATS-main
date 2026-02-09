@@ -1,4 +1,4 @@
-# Use Node.js LT
+# Use Node.js LTE
 FROM node:18
 
 WORKDIR /usr/src/app

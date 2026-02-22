@@ -5,7 +5,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
 const controllers = new FacemashController();
-//module thingy
+//module thingyi
 
 module.exports = (app) => {
     app.get('/api/users', controllers.getAllUsers);

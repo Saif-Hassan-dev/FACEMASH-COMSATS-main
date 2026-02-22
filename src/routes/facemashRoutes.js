@@ -1,7 +1,7 @@
 const { FacemashController, getLeaderboard } = require('../controllers/facemashController');
 const multer = require('multer');
 
-// Use memory storagee for multer (for GCS upload)
+// Use memory storagee for multer (for GC upload)
 const upload = multer({ storage: multer.memoryStorage() });
 
 const controllers = new FacemashController();
